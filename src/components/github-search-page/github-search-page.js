@@ -1,13 +1,15 @@
-import {Button, Grid, TextField, Typography} from '@mui/material'
+import {Box, Button, Grid, TextField, Typography} from '@mui/material'
 import {Container} from '@mui/system'
 import {useState} from 'react'
 
 export const GithubSearchPage = () => {
   const [isSearching, setIsSearching] = useState(false)
+  const [isSearchApplied, setIsSearchApplied] = useState(false)
 
   const handleClick = async () => {
     setIsSearching(true)
     await Promise.resolve()
+    setIsSearchApplied(true)
     setIsSearching(false)
   }
 
@@ -35,14 +37,20 @@ export const GithubSearchPage = () => {
         </Grid>
       </Grid>
 
-      <Typography
-        display="flex"
-        alignItems="center"
-        justifyContent="center"
-        height={400}
-      >
-        Please provide a search option and click in the search button
-      </Typography>
+      {isSearchApplied ? (
+        <table />
+      ) : (
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          height={400}
+        >
+          <Typography>
+            Please provide a search option and click in the search button
+          </Typography>
+        </Box>
+      )}
     </Container>
   )
 }
