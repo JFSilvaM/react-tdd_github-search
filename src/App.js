@@ -1,5 +1,7 @@
+import {GithubSearchPage} from './components/github-search-page'
+
 function App() {
-  return <h1>Hello World</h1>
+  return <GithubSearchPage />
 }
 
 export default App
