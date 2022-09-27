@@ -1,4 +1,4 @@
-import {TextField, Typography} from '@mui/material'
+import {Button, TextField, Typography} from '@mui/material'
 
 export const GithubSearchPage = () => (
   <>
@@ -7,6 +7,8 @@ export const GithubSearchPage = () => (
     </Typography>
 
     <TextField label="Filter by" id="filterBy" />
+
+    <Button>Search</Button>
   </>
 )
 
