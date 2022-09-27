@@ -18,6 +18,15 @@ export const GithubSearchPage = () => (
         </Button>
       </Grid>
     </Grid>
+
+    <Typography
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+      height={400}
+    >
+      Please provide a search option and click in the search button
+    </Typography>
   </Container>
 )
 
