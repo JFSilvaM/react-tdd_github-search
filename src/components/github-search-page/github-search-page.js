@@ -1,6 +1,7 @@
 import {Box, Button, Grid, TextField, Typography} from '@mui/material'
 import {Container} from '@mui/system'
 import {useState} from 'react'
+import Content from '../content'
 
 export const GithubSearchPage = () => {
   const [isSearching, setIsSearching] = useState(false)
@@ -13,49 +14,13 @@ export const GithubSearchPage = () => {
     setIsSearching(false)
   }
 
-  const renderContent = () =>
-    isSearchApplied ? (
-      <table>
-        <thead>
-          <tr>
-            <th>Repository</th>
-            <th>Stars</th>
-            <th>Forks</th>
-            <th>Open issues</th>
-            <th>Updated at</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>
-              <img alt="test" src="" />
-              <a href="http://localhost:3000/test">Test</a>
-            </td>
-            <td>10</td>
-            <td>5</td>
-            <td>2</td>
-            <td>03-10-2022</td>
-          </tr>
-        </tbody>
-      </table>
-    ) : (
-      <Box
-        display="flex"
-        alignItems="center"
-        justifyContent="center"
-        height={400}
-      >
-        <Typography>
-          Please provide a search option and click in the search button
-        </Typography>
-      </Box>
-    )
-
   return (
     <Container>
-      <Typography variant="h3" component="h1">
-        Github repositories list
-      </Typography>
+      <Box my={4}>
+        <Typography variant="h3" component="h1">
+          Github repositories list
+        </Typography>
+      </Box>
 
       <Grid container spacing={2} justifyContent="space-between">
         <Grid item md={6} xs={12}>
@@ -75,7 +40,9 @@ export const GithubSearchPage = () => {
         </Grid>
       </Grid>
 
-      {renderContent()}
+      <Box my={4}>
+        <Content isSearchApplied={isSearchApplied} />
+      </Box>
     </Container>
   )
 }
