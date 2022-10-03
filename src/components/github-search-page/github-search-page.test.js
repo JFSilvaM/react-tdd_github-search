@@ -80,4 +80,22 @@ describe('when the developer does a search', () => {
     expect(openIssues).toHaveTextContent(/open issues/i)
     expect(updatedAt).toHaveTextContent(/updated at/i)
   })
+
+  test('each table result must contain: owner avatar image, name, stars, updated at, forks, open issues', async () => {
+    fireClickSearch()
+
+    const table = await screen.findByRole('table')
+
+    const tableCells = within(table).getAllByRole('cell')
+
+    expect(tableCells).toHaveLength(5)
+
+    const [repository, stars, forks, openIssues, updatedAt] = tableCells
+
+    expect(repository).toHaveTextContent(/test/i)
+    expect(stars).toHaveTextContent(/10/)
+    expect(forks).toHaveTextContent(/5/)
+    expect(openIssues).toHaveTextContent(/2/i)
+    expect(updatedAt).toHaveTextContent(/03-10-2022/i)
+  })
 })
