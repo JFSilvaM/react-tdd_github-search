@@ -86,7 +86,11 @@ describe('when the developer does a search', () => {
 
     const table = await screen.findByRole('table')
 
-    const tableCells = within(table).getAllByRole('cell')
+    const withinTable = within(table)
+
+    const tableCells = withinTable.getAllByRole('cell')
+
+    expect(withinTable.getByRole('img', {name: /test/i}))
 
     expect(tableCells).toHaveLength(5)
 
