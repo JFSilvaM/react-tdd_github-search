@@ -21,6 +21,17 @@ const tableHeaders = [
 ]
 
 export const Content = ({isSearchApplied, reposList}) => {
+  const renderWithBox = callback => (
+    <Box
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+      height={400}
+    >
+      {callback}
+    </Box>
+  )
+
   if (isSearchApplied && !!reposList.length) {
     return (
       <>
@@ -74,22 +85,13 @@ export const Content = ({isSearchApplied, reposList}) => {
   }
 
   if (isSearchApplied && !reposList.length) {
-    return (
-      <Box
-        display="flex"
-        alignItems="center"
-        justifyContent="center"
-        height={400}
-      >
-        <Typography>You search has no results</Typography>
-      </Box>
-    )
+    return renderWithBox(<Typography>You search has no results</Typography>)
   }
 
-  return (
+  return renderWithBox(
     <Typography>
       Please provide a search option and click in the search button
-    </Typography>
+    </Typography>,
   )
 }
 
