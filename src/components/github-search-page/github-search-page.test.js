@@ -4,196 +4,198 @@ import {
   screen,
   waitFor,
   within,
-} from '@testing-library/react'
-import {GithubSearchPage} from './github-search-page'
-import {rest} from 'msw'
-import {setupServer} from 'msw/node'
-import {makeFakeResponse, makeFakeRepo} from '../../__fixtures__/repos'
-import {OK_STATUS} from '../../consts'
+} from "@testing-library/react";
+import { GithubSearchPage } from "./github-search-page";
+import { rest } from "msw";
+import { setupServer } from "msw/node";
+import { makeFakeResponse, makeFakeRepo } from "../../__fixtures__/repos";
+import { OK_STATUS } from "../../consts";
 
-const fakeResponse = makeFakeResponse({totalCount: 1})
+const fakeResponse = makeFakeResponse({ totalCount: 1 });
 
-const fakeRepo = makeFakeRepo()
+const fakeRepo = makeFakeRepo();
 
-fakeResponse.items = [fakeRepo]
+fakeResponse.items = [fakeRepo];
 
 const server = setupServer(
-  rest.get('/search/repositories', (req, res, ctx) =>
-    res(ctx.status(OK_STATUS), ctx.json(fakeResponse)),
-  ),
-)
+  rest.get("/search/repositories", (req, res, ctx) =>
+    res(ctx.status(OK_STATUS), ctx.json(fakeResponse))
+  )
+);
 
-beforeAll(() => server.listen())
+beforeAll(() => server.listen());
 
-afterEach(() => server.resetHandlers())
+afterEach(() => server.resetHandlers());
 
-afterAll(() => server.close())
+afterAll(() => server.close());
 
-beforeEach(() => render(<GithubSearchPage />))
+beforeEach(() => render(<GithubSearchPage />));
 
 const fireClickSearch = () =>
-  fireEvent.click(screen.getByRole('button', {name: /search/i}))
+  fireEvent.click(screen.getByRole("button", { name: /search/i }));
 
-describe('when the GithubSearchPage is mounted', () => {
-  test('must display the title', () => {
+describe("when the GithubSearchPage is mounted", () => {
+  test("must display the title", () => {
     expect(
-      screen.getByRole('heading', {name: /github repositories list/i}),
-    ).toBeInTheDocument()
-  })
+      screen.getByRole("heading", { name: /github repositories list/i })
+    ).toBeInTheDocument();
+  });
 
   test('must be an input text with label "filter by" field', () => {
-    expect(screen.getByLabelText(/filter by/i)).toBeInTheDocument()
-  })
+    expect(screen.getByLabelText(/filter by/i)).toBeInTheDocument();
+  });
 
-  test('must be a Search Button', () => {
-    expect(screen.getByRole('button', {name: /search/i})).toBeInTheDocument()
-  })
+  test("must be a Search Button", () => {
+    expect(screen.getByRole("button", { name: /search/i })).toBeInTheDocument();
+  });
 
   test("must be a initial message 'Please provide a search option and click in the search button'", () => {
     expect(
       screen.getByText(
-        /please provide a search option and click in the search button/i,
-      ),
-    ).toBeInTheDocument()
-  })
-})
+        /please provide a search option and click in the search button/i
+      )
+    ).toBeInTheDocument();
+  });
+});
 
-describe('when the developer does a search', () => {
-  test('the search button should be disabled until the search is done', async () => {
-    expect(screen.getByRole('button', {name: /search/i})).not.toBeDisabled()
+describe("when the developer does a search", () => {
+  test("the search button should be disabled until the search is done", async () => {
+    expect(screen.getByRole("button", { name: /search/i })).not.toBeDisabled();
 
-    fireClickSearch()
+    fireClickSearch();
 
-    expect(screen.getByRole('button', {name: /search/i})).toBeDisabled()
+    expect(screen.getByRole("button", { name: /search/i })).toBeDisabled();
 
     await waitFor(() =>
-      expect(screen.getByRole('button', {name: /search/i})).not.toBeDisabled(),
-    )
-  })
+      expect(screen.getByRole("button", { name: /search/i })).not.toBeDisabled()
+    );
+  });
 
-  test('the data should be displayed as a sticky table', async () => {
-    fireClickSearch()
+  test("the data should be displayed as a sticky table", async () => {
+    fireClickSearch();
 
     await waitFor(() =>
       expect(
         screen.queryByText(
-          /please provide a search option and click in the search button/i,
-        ),
-      ).not.toBeInTheDocument(),
-    )
+          /please provide a search option and click in the search button/i
+        )
+      ).not.toBeInTheDocument()
+    );
 
-    expect(screen.getByRole('table')).toBeInTheDocument()
-  })
+    expect(screen.getByRole("table")).toBeInTheDocument();
+  });
 
-  test('the table header must contain: Repository, stars, forks, open issues and updated at', async () => {
-    fireClickSearch()
+  test("the table header must contain: Repository, stars, forks, open issues and updated at", async () => {
+    fireClickSearch();
 
-    const table = await screen.findByRole('table')
+    const table = await screen.findByRole("table");
 
-    const tableHeaders = within(table).getAllByRole('columnheader')
+    const tableHeaders = within(table).getAllByRole("columnheader");
 
-    expect(tableHeaders).toHaveLength(5)
+    expect(tableHeaders).toHaveLength(5);
 
-    const [repository, stars, forks, openIssues, updatedAt] = tableHeaders
+    const [repository, stars, forks, openIssues, updatedAt] = tableHeaders;
 
-    expect(repository).toHaveTextContent(/repository/i)
-    expect(stars).toHaveTextContent(/stars/i)
-    expect(forks).toHaveTextContent(/forks/i)
-    expect(openIssues).toHaveTextContent(/open issues/i)
-    expect(updatedAt).toHaveTextContent(/updated at/i)
-  })
+    expect(repository).toHaveTextContent(/repository/i);
+    expect(stars).toHaveTextContent(/stars/i);
+    expect(forks).toHaveTextContent(/forks/i);
+    expect(openIssues).toHaveTextContent(/open issues/i);
+    expect(updatedAt).toHaveTextContent(/updated at/i);
+  });
 
   test(`each table result must contain: owner avatar image, name, stars, updated at, forks, open issues,
   it should have a link that opens in a new tab`, async () => {
-    fireClickSearch()
+    fireClickSearch();
 
-    const table = await screen.findByRole('table')
+    const table = await screen.findByRole("table");
 
-    const withinTable = within(table)
+    const withinTable = within(table);
 
-    const tableCells = withinTable.getAllByRole('cell')
+    const tableCells = withinTable.getAllByRole("cell");
 
-    const [repository, stars, forks, openIssues, updatedAt] = tableCells
+    const [repository, stars, forks, openIssues, updatedAt] = tableCells;
 
-    const avatarImg = within(repository).getByRole('img', {name: fakeRepo.name})
+    const avatarImg = within(repository).getByRole("img", {
+      name: fakeRepo.name,
+    });
 
-    expect(avatarImg).toBeInTheDocument()
+    expect(avatarImg).toBeInTheDocument();
 
-    expect(tableCells).toHaveLength(5)
+    expect(tableCells).toHaveLength(5);
 
-    expect(repository).toHaveTextContent(fakeRepo.name)
-    expect(stars).toHaveTextContent(fakeRepo.stargazers_count)
-    expect(forks).toHaveTextContent(fakeRepo.forks_count)
-    expect(openIssues).toHaveTextContent(fakeRepo.open_issues_count)
-    expect(updatedAt).toHaveTextContent(fakeRepo.updated_at)
+    expect(repository).toHaveTextContent(fakeRepo.name);
+    expect(stars).toHaveTextContent(fakeRepo.stargazers_count);
+    expect(forks).toHaveTextContent(fakeRepo.forks_count);
+    expect(openIssues).toHaveTextContent(fakeRepo.open_issues_count);
+    expect(updatedAt).toHaveTextContent(fakeRepo.updated_at);
 
-    expect(withinTable.getByText(fakeRepo.name).closest('a')).toHaveAttribute(
-      'href',
-      fakeRepo.html_url,
-    )
+    expect(withinTable.getByText(fakeRepo.name).closest("a")).toHaveAttribute(
+      "href",
+      fakeRepo.html_url
+    );
 
-    expect(avatarImg).toHaveAttribute('src', fakeRepo.owner.avatar_url)
-  })
+    expect(avatarImg).toHaveAttribute("src", fakeRepo.owner.avatar_url);
+  });
 
-  test('must display the total results number of the search and the current number of results', async () => {
-    fireClickSearch()
+  test("must display the total results number of the search and the current number of results", async () => {
+    fireClickSearch();
 
-    await screen.findByRole('table')
+    await screen.findByRole("table");
 
-    expect(screen.getByText(/1–1 of 1/)).toBeInTheDocument()
-  })
+    expect(screen.getByText(/1–1 of 1/)).toBeInTheDocument();
+  });
 
-  test('results size per page select/combobox with the options: 30, 50, 100. The default is 30', async () => {
-    fireClickSearch()
+  test("results size per page select/combobox with the options: 30, 50, 100. The default is 30", async () => {
+    fireClickSearch();
 
-    await screen.findByRole('table')
+    await screen.findByRole("table");
 
-    expect(screen.getByLabelText(/rows per page/i)).toBeInTheDocument()
+    expect(screen.getByLabelText(/rows per page/i)).toBeInTheDocument();
 
-    fireEvent.mouseDown(screen.getByLabelText(/rows per page/i))
+    fireEvent.mouseDown(screen.getByLabelText(/rows per page/i));
 
-    const listbox = screen.getByRole('listbox', {mame: /rows per page/i})
+    const listbox = screen.getByRole("listbox", { mame: /rows per page/i });
 
-    const options = within(listbox).getAllByRole('option')
+    const options = within(listbox).getAllByRole("option");
 
-    const [option30, option50, option100] = options
+    const [option30, option50, option100] = options;
 
-    expect(option30).toHaveTextContent(/30/)
-    expect(option50).toHaveTextContent(/50/)
-    expect(option100).toHaveTextContent(/100/)
-  })
+    expect(option30).toHaveTextContent(/30/);
+    expect(option50).toHaveTextContent(/50/);
+    expect(option100).toHaveTextContent(/100/);
+  });
 
-  test('must exists the next and previous pagination button', async () => {
-    fireClickSearch()
+  test("must exists the next and previous pagination button", async () => {
+    fireClickSearch();
 
-    await screen.findByRole('table')
+    await screen.findByRole("table");
 
-    const previousBtn = screen.getByRole('button', {name: /previous page/i})
+    const previousBtn = screen.getByRole("button", { name: /previous page/i });
 
-    expect(previousBtn).toBeInTheDocument()
+    expect(previousBtn).toBeInTheDocument();
 
-    expect(screen.getByRole('button', {name: /next page/i})).toBeInTheDocument()
+    expect(
+      screen.getByRole("button", { name: /next page/i })
+    ).toBeInTheDocument();
 
-    expect(previousBtn).toBeDisabled()
-  })
-})
+    expect(previousBtn).toBeDisabled();
+  });
+});
 
-describe('when the developer does a search without results', () => {
+describe("when the developer does a search without results", () => {
   test('must show a empty state message "You search has no results"', async () => {
     server.use(
-      rest.get('/search/repositories', (req, res, ctx) =>
-        res(ctx.status(OK_STATUS), ctx.json(makeFakeResponse({}))),
-      ),
-    )
+      rest.get("/search/repositories", (req, res, ctx) =>
+        res(ctx.status(OK_STATUS), ctx.json(makeFakeResponse({})))
+      )
+    );
 
-    fireClickSearch()
+    fireClickSearch();
 
     await waitFor(() =>
-      expect(
-        screen.getByText(/you search has no results/i),
-      ).toBeInTheDocument(),
-    )
+      expect(screen.getByText(/you search has no results/i)).toBeInTheDocument()
+    );
 
-    expect(screen.queryByRole('table')).not.toBeInTheDocument()
-  })
-})
+    expect(screen.queryByRole("table")).not.toBeInTheDocument();
+  });
+});

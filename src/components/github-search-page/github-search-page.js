@@ -1,23 +1,22 @@
-import {Box, Button, Grid, TextField, Typography} from '@mui/material'
-import {Container} from '@mui/system'
-import {useState} from 'react'
-import Content from '../content'
+import { Box, Button, Grid, TextField, Typography } from "@mui/material";
+import { Container } from "@mui/system";
+import { useState } from "react";
+import Content from "../content";
+import { getRepos } from "../../services";
 
 export const GithubSearchPage = () => {
-  const [isSearching, setIsSearching] = useState(false)
-  const [isSearchApplied, setIsSearchApplied] = useState(false)
-  const [reposList, setReposList] = useState([])
+  const [isSearching, setIsSearching] = useState(false);
+  const [isSearchApplied, setIsSearchApplied] = useState(false);
+  const [reposList, setReposList] = useState([]);
 
   const handleClick = async () => {
-    setIsSearching(true)
-    const response = await fetch(
-      `/search/repositories?q=react+language:python&page=2&per_page=50`,
-    )
-    const data = await response.json()
-    setReposList(data.items)
-    setIsSearchApplied(true)
-    setIsSearching(false)
-  }
+    setIsSearching(true);
+    const response = await getRepos();
+    const data = await response.json();
+    setReposList(data.items);
+    setIsSearchApplied(true);
+    setIsSearching(false);
+  };
 
   return (
     <Container>
@@ -49,7 +48,7 @@ export const GithubSearchPage = () => {
         <Content isSearchApplied={isSearchApplied} reposList={reposList} />
       </Box>
     </Container>
-  )
-}
+  );
+};
 
-export default GithubSearchPage
+export default GithubSearchPage;
