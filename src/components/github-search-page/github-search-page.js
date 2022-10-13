@@ -1,6 +1,6 @@
 import {Box, Button, Grid, TextField, Typography} from '@mui/material'
 import {Container} from '@mui/system'
-import {useState} from 'react'
+import {useCallback, useEffect, useRef, useState} from 'react'
 import Content from '../content'
 import {getRepos} from '../../services'
 
@@ -11,16 +11,27 @@ export const GithubSearchPage = () => {
   const [searchBy, setSearchBy] = useState('')
   const [rowsPerPage, setRowsPerPage] = useState(30)
 
-  const handleClick = async () => {
+  const didMount = useRef(false)
+
+  const handleSearch = useCallback(async () => {
     setIsSearching(true)
     const response = await getRepos({q: searchBy, rowsPerPage})
     const data = await response.json()
     setReposList(data.items)
     setIsSearchApplied(true)
     setIsSearching(false)
-  }
+  }, [rowsPerPage, searchBy])
 
   const handleChange = ({target: {value}}) => setSearchBy(value)
+
+  useEffect(() => {
+    if (!didMount.current) {
+      didMount.current = true
+      return
+    }
+
+    handleSearch()
+  }, [handleSearch, rowsPerPage])
 
   return (
     <Container>
@@ -47,7 +58,7 @@ export const GithubSearchPage = () => {
             fullWidth
             color="primary"
             variant="contained"
-            onClick={handleClick}
+            onClick={handleSearch}
           >
             Search
           </Button>
