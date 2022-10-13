@@ -1,8 +1,8 @@
 import {Box, Button, Grid, TextField, Typography} from '@mui/material'
 import {Container} from '@mui/system'
 import {useCallback, useEffect, useRef, useState} from 'react'
-import Content from '../content'
 import {getRepos} from '../../services'
+import Content from '../content'
 
 export const GithubSearchPage = () => {
   const [isSearching, setIsSearching] = useState(false)
