@@ -1,25 +1,26 @@
-import { Box, Button, Grid, TextField, Typography } from "@mui/material";
-import { Container } from "@mui/system";
-import { useState } from "react";
-import Content from "../content";
-import { getRepos } from "../../services";
+import {Box, Button, Grid, TextField, Typography} from '@mui/material'
+import {Container} from '@mui/system'
+import {useState} from 'react'
+import Content from '../content'
+import {getRepos} from '../../services'
 
 export const GithubSearchPage = () => {
-  const [isSearching, setIsSearching] = useState(false);
-  const [isSearchApplied, setIsSearchApplied] = useState(false);
-  const [reposList, setReposList] = useState([]);
-  const [searchBy, setSearchBy] = useState("");
+  const [isSearching, setIsSearching] = useState(false)
+  const [isSearchApplied, setIsSearchApplied] = useState(false)
+  const [reposList, setReposList] = useState([])
+  const [searchBy, setSearchBy] = useState('')
+  const [rowsPerPage, setRowsPerPage] = useState(30)
 
   const handleClick = async () => {
-    setIsSearching(true);
-    const response = await getRepos({ q: searchBy });
-    const data = await response.json();
-    setReposList(data.items);
-    setIsSearchApplied(true);
-    setIsSearching(false);
-  };
+    setIsSearching(true)
+    const response = await getRepos({q: searchBy, rowsPerPage})
+    const data = await response.json()
+    setReposList(data.items)
+    setIsSearchApplied(true)
+    setIsSearching(false)
+  }
 
-  const handleChange = ({ target: { value } }) => setSearchBy(value);
+  const handleChange = ({target: {value}}) => setSearchBy(value)
 
   return (
     <Container>
@@ -54,10 +55,15 @@ export const GithubSearchPage = () => {
       </Grid>
 
       <Box my={4}>
-        <Content isSearchApplied={isSearchApplied} reposList={reposList} />
+        <Content
+          isSearchApplied={isSearchApplied}
+          reposList={reposList}
+          rowsPerPage={rowsPerPage}
+          setRowsPerPage={setRowsPerPage}
+        />
       </Box>
     </Container>
-  );
-};
+  )
+}
 
-export default GithubSearchPage;
+export default GithubSearchPage
