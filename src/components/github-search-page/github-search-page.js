@@ -24,15 +24,29 @@ export const GithubSearchPage = () => {
   const searchByInput = useRef(null)
 
   const handleSearch = useCallback(async () => {
-    setIsSearching(true)
-    const response = await getRepos({
-      q: searchByInput.current.value,
-      rowsPerPage,
-    })
-    const data = await response.json()
-    setReposList(data.items)
-    setIsSearchApplied(true)
-    setIsSearching(false)
+    try {
+      setIsSearching(true)
+      const response = await getRepos({
+        q: searchByInput.current.value,
+        rowsPerPage,
+      })
+
+      if (!response.ok) {
+        throw response
+      }
+
+      const data = await response.json()
+
+      setReposList(data.items)
+      setIsSearchApplied(true)
+    } catch (err) {
+      const data = await err.json()
+
+      setIsOpen(true)
+      setErrorMessage(data.message)
+    } finally {
+      setIsSearching(false)
+    }
   }, [rowsPerPage])
 
   const handleChangeRowsPerPage = ({target: {value}}) => setRowsPerPage(value)
