@@ -1,4 +1,5 @@
 import {Button, Typography} from '@mui/material'
+import PropTypes from 'prop-types'
 import React from 'react'
 
 export class ErrorBoundary extends React.Component {
@@ -36,6 +37,10 @@ export class ErrorBoundary extends React.Component {
 
     return children
   }
+}
+
+ErrorBoundary.propTypes = {
+  children: PropTypes.node.isRequired,
 }
 
 export default ErrorBoundary

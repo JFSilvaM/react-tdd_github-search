@@ -84,7 +84,7 @@ export const GithubSearchPage = () => {
     }
 
     handleSearch()
-  }, [handleSearch, rowsPerPage])
+  }, [handleSearch])
 
   return (
     <Container>
