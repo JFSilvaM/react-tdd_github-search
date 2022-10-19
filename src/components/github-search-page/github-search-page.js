@@ -2,6 +2,7 @@ import {
   Box,
   Button,
   Grid,
+  Snackbar,
   TablePagination,
   TextField,
   Typography,
@@ -23,6 +24,7 @@ export const GithubSearchPage = () => {
   const [rowsPerPage, setRowsPerPage] = useState(ROWS_PER_PAGE_DEFAULT)
   const [currentPage, setCurrentPage] = useState(INITIAL_CURRENT_PAGE)
   const [totalCount, setTotalCount] = useState(INITIAL_TOTAL_COUNT)
+  const [isOpen, setIsOpen] = useState(false)
 
   const didMount = useRef(false)
   const searchByInput = useRef(null)
@@ -46,10 +48,7 @@ export const GithubSearchPage = () => {
       setTotalCount(data.total_count)
       setIsSearchApplied(true)
     } catch (err) {
-      const data = await err.json()
-
       setIsOpen(true)
-      setErrorMessage(data.message)
     } finally {
       setIsSearching(false)
     }
@@ -118,6 +117,14 @@ export const GithubSearchPage = () => {
           </>
         </Content>
       </Box>
+
+      <Snackbar
+        anchorOrigin={{vertical: 'top', horizontal: 'center'}}
+        open={isOpen}
+        autoHideDuration={6000}
+        onClose={() => setIsOpen(false)}
+        message="Validation Failed"
+      />
     </Container>
   )
 }
