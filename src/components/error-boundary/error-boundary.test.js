@@ -35,17 +35,20 @@ describe('when the component throws an error', () => {
 })
 
 describe('when the user clicks on reload button', () => {
-  delete window.location
+  'must reload the app',
+    () => {
+      delete window.location
 
-  window.location = {reload: jest.fn()}
+      window.location = {reload: jest.fn()}
 
-  render(
-    <ErrorBoundary>
-      <ThrowError />
-    </ErrorBoundary>,
-  )
+      render(
+        <ErrorBoundary>
+          <ThrowError />
+        </ErrorBoundary>,
+      )
 
-  fireEvent.click(screen.getByRole('button', {name: /reload/i}))
+      fireEvent.click(screen.getByRole('button', {name: /reload/i}))
 
-  expect(window.location.reload).toHaveBeenCalledTimes(1)
+      expect(window.location.reload).toHaveBeenCalledTimes(1)
+    }
 })
