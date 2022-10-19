@@ -132,3 +132,41 @@ describe('when the developer does a search and clicks on next page button and se
     expect(screen.getByRole('cell', {name: /1-0/})).toBeInTheDocument()
   }, 30000)
 })
+
+describe('when the developer does a search and clicks on next page button and clicks on search again', () => {
+  test('must display the results of the first page', async () => {
+    server.use(rest.get('/search/repositories', handlerPaginated))
+
+    fireClickSearch()
+
+    expect(await screen.findByRole('table')).toBeInTheDocument()
+    expect(screen.getByRole('cell', {name: /1-0/})).toBeInTheDocument()
+    expect(screen.getByRole('button', {name: /next page/i})).not.toBeDisabled()
+
+    fireEvent.click(screen.getByRole('button', {name: /next page/i}))
+
+    expect(screen.getByRole('button', {name: /search/i})).toBeDisabled()
+
+    await waitFor(
+      () =>
+        expect(
+          screen.getByRole('button', {name: /search/i}),
+        ).not.toBeDisabled(),
+      {timeout: 3000},
+    )
+
+    expect(screen.getByRole('cell', {name: /2-0/})).toBeInTheDocument()
+
+    fireClickSearch()
+
+    await waitFor(
+      () =>
+        expect(
+          screen.getByRole('button', {name: /search/i}),
+        ).not.toBeDisabled(),
+      {timeout: 3000},
+    )
+
+    expect(screen.getByRole('cell', {name: /1-0/})).toBeInTheDocument()
+  }, 30000)
+})
