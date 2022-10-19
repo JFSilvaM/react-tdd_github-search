@@ -7,7 +7,7 @@ import {
 } from '@testing-library/react'
 import {rest} from 'msw'
 import {setupServer} from 'msw/node'
-import {OK_STATUS} from '../../consts'
+import {OK_STATUS, UNEXPECTED_STATUS, UNPROCESSABLE_STATUS} from '../../consts'
 import {handlerPaginated} from '../../__fixtures__/handlers'
 import {
   getReposListBy,
@@ -314,16 +314,37 @@ describe('when the developer clicks on search and then on next page button and t
   }, 10000)
 })
 
-describe('when there is an unexpected error from the backend', () => {
+describe('when there is an Unprocessable Entity from the backend', () => {
   test('must display an alert message error with the message from the service', async () => {
+    expect(screen.queryByText(/validation failed/i)).not.toBeInTheDocument()
+
     server.use(
       rest.get('/search/repositories', (req, res, ctx) =>
-        res(ctx.status(422), ctx.json(makeFakeError())),
+        res(ctx.status(UNPROCESSABLE_STATUS), ctx.json(makeFakeError())),
       ),
     )
 
     fireClickSearch()
 
-    expect(await screen.findByText(/Validation Failed/)).toBeVisible()
+    expect(await screen.findByText(/validation failed/i)).toBeVisible()
+  })
+})
+
+describe('when there is an unexpected error from the backend', () => {
+  test('must display an alert message error with the message from the service', async () => {
+    expect(screen.queryByText(/unexpected error/i)).not.toBeInTheDocument()
+
+    server.use(
+      rest.get('/search/repositories', (req, res, ctx) =>
+        res(
+          ctx.status(UNEXPECTED_STATUS),
+          ctx.json(makeFakeError({message: 'Unexpected Error'})),
+        ),
+      ),
+    )
+
+    fireClickSearch()
+
+    expect(await screen.findByText(/unexpected error/i)).toBeVisible()
   })
 })
